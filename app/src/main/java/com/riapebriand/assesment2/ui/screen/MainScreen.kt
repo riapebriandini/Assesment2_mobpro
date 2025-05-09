@@ -114,8 +114,6 @@ fun MainScreen(navController: NavHostController) {
                                 )
                             )
                         }
-
-                        // Tombol ganti tema
                         var themeExpanded by remember { mutableStateOf(false) }
                         IconButton(onClick = { themeExpanded = true }) {
                             Icon(
@@ -135,7 +133,6 @@ fun MainScreen(navController: NavHostController) {
                             }
                         }
 
-                        // Tombol ke recycle bin
                         IconButton(onClick = {
                             navController.navigate(Screen.RecycleBin.route)
                         }) {

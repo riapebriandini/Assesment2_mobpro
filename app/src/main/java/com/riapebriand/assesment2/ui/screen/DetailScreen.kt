@@ -29,6 +29,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,7 +45,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.riapebriand.assesment2.R
+import com.riapebriand.assesment2.ui.theme.AppTheme
 import com.riapebriand.assesment2.ui.theme.Assesment2Theme
+import com.riapebriand.assesment2.ui.theme.Typography
+import com.riapebriand.assesment2.ui.theme.blueColorScheme
+import com.riapebriand.assesment2.ui.theme.pinkColorScheme
+import com.riapebriand.assesment2.ui.theme.yellowColorScheme
+import com.riapebriand.assesment2.util.SettingsDataStore
 import com.riapebriand.assesment2.util.ViewModelFactory
 
 const val KEY_ID_WISHLIST = "idWishlist"
@@ -54,9 +61,16 @@ val fixedCategories = listOf("Gadget", "Buku", "Liburan", "Pakaian", "Lainnya")
 @Composable
 fun DetailScreen(navController: NavHostController, id: Long? = null) {
     val context = LocalContext.current
+    val dataStore = SettingsDataStore(context)
+    val selectedTheme by dataStore.selectedThemeFlow.collectAsState(initial = AppTheme.PINK)
+    val colorScheme = when (selectedTheme) {
+        AppTheme.PINK -> pinkColorScheme
+        AppTheme.BLUE -> blueColorScheme
+        AppTheme.YELLOW -> yellowColorScheme
+    }
+
     val factory = ViewModelFactory(context)
     val viewModel: DetailViewModel = viewModel(factory = factory)
-
 
     var nama by remember { mutableStateOf("") }
     var deskripsi by remember { mutableStateOf("") }
@@ -73,76 +87,79 @@ fun DetailScreen(navController: NavHostController, id: Long? = null) {
         isTercapai = data.isTercapai
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.kembali),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                },
-                title = {
-                    Text(
-                        text = if (id == null) stringResource(R.string.tambah_item)
-                        else stringResource(R.string.ubah_item)
-                    )
-                },
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary
-                ),
-                actions = {
-                    IconButton(onClick = {
-                        if (nama.isEmpty() || deskripsi.isEmpty()) {
-                            Toast.makeText(context, "Data tidak boleh kosong!", Toast.LENGTH_SHORT).show()
-                            return@IconButton
+    MaterialTheme(colorScheme = colorScheme, typography = Typography) {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    navigationIcon = {
+                        IconButton(onClick = { navController.popBackStack() }) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = stringResource(R.string.kembali),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
                         }
+                    },
+                    title = {
+                        Text(
+                            text = if (id == null) stringResource(R.string.tambah_item)
+                            else stringResource(R.string.ubah_item)
+                        )
+                    },
+                    colors = TopAppBarDefaults.mediumTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        titleContentColor = MaterialTheme.colorScheme.primary
+                    ),
+                    actions = {
+                        IconButton(onClick = {
+                            if (nama.isEmpty() || deskripsi.isEmpty()) {
+                                Toast.makeText(context, "Data tidak boleh kosong!", Toast.LENGTH_SHORT).show()
+                                return@IconButton
+                            }
 
-                        if (id == null) {
-                            viewModel.insert(nama, deskripsi, kategori, isTercapai)
-                        } else {
-                            viewModel.update(id, nama, deskripsi, kategori, isTercapai)
+                            if (id == null) {
+                                viewModel.insert(nama, deskripsi, kategori, isTercapai)
+                            } else {
+                                viewModel.update(id, nama, deskripsi, kategori, isTercapai)
+                            }
+                            navController.popBackStack()
+                        }) {
+                            Icon(
+                                imageVector = Icons.Outlined.Check,
+                                contentDescription = stringResource(R.string.simpan),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
                         }
-                        navController.popBackStack()
-                    }) {
-                        Icon(
-                            imageVector = Icons.Outlined.Check,
-                            contentDescription = stringResource(R.string.simpan),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                    if (id != null) {
-                        DeleteAction {
-                            showDialog = true
+                        if (id != null) {
+                            DeleteAction {
+                                showDialog = true
+                            }
                         }
                     }
-                }
+                )
+            }
+        ) { padding ->
+            WishlistForm(
+                name = nama,
+                onNameChange = { nama = it },
+                description = deskripsi,
+                onDescriptionChange = { deskripsi = it },
+                category = kategori,
+                onCategoryChange = { kategori = it },
+                isAchieved = isTercapai,
+                onAchievedChange = { isTercapai = it },
+                modifier = Modifier.padding(padding)
             )
         }
-    ) { padding ->
-        WishlistForm(
-            name = nama,
-            onNameChange = { nama = it },
-            description = deskripsi,
-            onDescriptionChange = { deskripsi = it },
-            category = kategori,
-            onCategoryChange = { kategori = it },
-            isAchieved = isTercapai,
-            onAchievedChange = { isTercapai = it },
-            modifier = Modifier.padding(padding)
-        )
-    }
 
-    if (id != null && showDialog) {
-        DisplayAlertDialog(
-            onDismissRequest = { showDialog = false }) {
-            showDialog = false
-            viewModel.delete(id)
-            navController.popBackStack()
+        if (id != null && showDialog) {
+            DisplayAlertDialog(
+                onDismissRequest = { showDialog = false }
+            ) {
+                showDialog = false
+                viewModel.delete(id)
+                navController.popBackStack()
+            }
         }
     }
 }
@@ -253,7 +270,6 @@ fun WishlistForm(
     }
 }
 
-
 @Composable
 fun DeleteAction(onDeleteClick: () -> Unit) {
     var expanded by remember { mutableStateOf(false) }
@@ -287,5 +303,3 @@ fun DetailWishlistScreenPreview() {
         DetailScreen(rememberNavController())
     }
 }
-
-

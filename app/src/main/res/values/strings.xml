@@ -7,15 +7,12 @@
     <string name="tambah_item">Tambah Wishlist</string>
     <string name="ubah_item">Ubah Wishlist</string>
     <string name="kembali">Kembali</string>
-    <string name="list_kosong">Belum ada habit yang ditambahkan.</string>
+    <string name="list_kosong">Belum ada wishlist yang ditambahkan.</string>
     <string name="simpan">Simpan</string>
     <string name="hapus">Hapus</string>
     <string name="grid">Tampilan Grid</string>
     <string name="list">Tampilan List</string>
-    <string name="tema">Pilih Tema</string>
-    <string name="biru">Biru</string>
-    <string name="hijau">Hijau</string>
-    <string name="merah">Merah</string>
+
     <string name="pesan_hapus">Hapus wishlist ini?</string>
     <string name="recycle_bin">Recycle Bin</string>
     <string name="hapus_permanen">Hapus Permanen</string>
