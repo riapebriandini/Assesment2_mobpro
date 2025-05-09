@@ -19,11 +19,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -124,7 +124,7 @@ fun MainScreen(navController: NavHostController) {
                             )
                         }
                         DropdownMenu(expanded = themeExpanded, onDismissRequest = { themeExpanded = false }) {
-                            AppTheme.values().forEach { theme ->
+                            AppTheme.entries.forEach { theme ->
                                 DropdownMenuItem(
                                     text = { Text(theme.displayName) },
                                     onClick = {
@@ -227,10 +227,10 @@ fun ScreenContent(
                         navController.navigate(Screen.FormUbah.withId(item.id))
                     }, onDelete = { onDelete(item) })
 
-                    Divider(
+                    HorizontalDivider(
                         modifier = Modifier.padding(horizontal = 16.dp),
-                        color = MaterialTheme.colorScheme.outline,
-                        thickness = 0.5.dp
+                        thickness = 0.5.dp,
+                        color = MaterialTheme.colorScheme.outline
                     )
                 }
             }

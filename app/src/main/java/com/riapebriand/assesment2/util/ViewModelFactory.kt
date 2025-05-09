@@ -15,7 +15,6 @@ class ViewModelFactory(
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val dao = WishlistDb.getInstance(context).dao
         if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
-//            val repository = HabitRepository(dao)
             return MainViewModel(dao) as T
         } else if (modelClass.isAssignableFrom(DetailViewModel::class.java))
             return DetailViewModel(dao) as T

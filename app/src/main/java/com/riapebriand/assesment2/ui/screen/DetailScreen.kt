@@ -44,7 +44,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.riapebriand.assesment2.R
-import com.riapebriand.assesment2.model.Wishlist
 import com.riapebriand.assesment2.ui.theme.Assesment2Theme
 import com.riapebriand.assesment2.util.ViewModelFactory
 
@@ -58,7 +57,6 @@ fun DetailScreen(navController: NavHostController, id: Long? = null) {
     val factory = ViewModelFactory(context)
     val viewModel: DetailViewModel = viewModel(factory = factory)
 
-    var itemToDelete by remember { mutableStateOf<Wishlist?>(null) }
 
     var nama by remember { mutableStateOf("") }
     var deskripsi by remember { mutableStateOf("") }

@@ -24,12 +24,6 @@ class MainViewModel(private val dao: WishlistDao) : ViewModel() {
         initialValue = emptyList()
     )
 
-    fun restoreWishlist(id: Long) {
-        viewModelScope.launch {
-            dao.restoreById(id)
-        }
-    }
-
     fun delete(id: Long) {
         viewModelScope.launch {
             dao.deleteById(id)
